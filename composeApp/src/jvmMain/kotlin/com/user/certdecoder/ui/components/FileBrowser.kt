@@ -31,7 +31,7 @@ fun FileBrowser(modifier: Modifier = Modifier) {
 
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.6f)
+                .fillMaxWidth()
                 .height(80.dp)) {
 
             Row(
