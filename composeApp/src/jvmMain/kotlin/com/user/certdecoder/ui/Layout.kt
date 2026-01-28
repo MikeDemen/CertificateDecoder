@@ -14,10 +14,19 @@ import com.user.certdecoder.ui.components.FileBrowser
 import com.user.certdecoder.ui.components.InputTextField
 import com.user.certdecoder.ui.components.OutputTextField
 import com.user.certdecoder.ui.components.FunctionButtons
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.user.certdecoder.ui.utils.decodeCertificate
 
 
 @Composable
 fun MainLayout() {
+
+    var pemText by remember { mutableStateOf("") }
+    var outputText by remember { mutableStateOf("") }
+
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +40,7 @@ fun MainLayout() {
                 .fillMaxHeight()
                 .padding(end = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)  // ← nice vertical spacing
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             FileBrowser(modifier = Modifier
                 .fillMaxWidth()
@@ -40,10 +49,26 @@ fun MainLayout() {
             Box(modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)) {
-                InputTextField(modifier = Modifier)
+                InputTextField(
+                    text = pemText,
+                    onTextChange = { pemText = it },
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
-            FunctionButtons()
+            FunctionButtons(
+                onDecode = {
+                    outputText = if (pemText.trim().isBlank()) {
+                        "No input provided. Please paste a certificate."
+                    } else {
+                        try {
+                            decodeCertificate(pemText.trim())
+                        } catch (e: Exception) {
+                            "Error: ${e.message ?: e::class.simpleName}"
+                        }
+                    }
+                }
+            )
         }
 
         Column(
@@ -53,7 +78,10 @@ fun MainLayout() {
                 .padding(start = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutputTextField(modifier = Modifier.fillMaxWidth())
+            OutputTextField(
+                text = outputText,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

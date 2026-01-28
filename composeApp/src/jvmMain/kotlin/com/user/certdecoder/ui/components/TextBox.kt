@@ -29,11 +29,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.text.font.FontWeight
+
 
 @Composable
-fun InputTextField(modifier: Modifier = Modifier) {
-
-    var text by remember { mutableStateOf("") }
+fun InputTextField(
+    text: String,
+    onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+){
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val scrollState: ScrollState = rememberScrollState()
@@ -41,6 +46,7 @@ fun InputTextField(modifier: Modifier = Modifier) {
     Box(modifier = Modifier.fillMaxSize()) {
         TextField(
             value = text,
+            onValueChange = onTextChange,
             placeholder = {
                 // Hide placeholder if window is selected or text is present
                 when {
@@ -60,9 +66,6 @@ fun InputTextField(modifier: Modifier = Modifier) {
                 errorIndicatorColor = Color.Transparent,
             ),
 
-            onValueChange = { newText: String -> text = newText },
-            enabled = true,
-            readOnly = false,
             maxLines = Int.MAX_VALUE,
             modifier = Modifier
                 .fillMaxSize()
@@ -76,32 +79,56 @@ fun InputTextField(modifier: Modifier = Modifier) {
             adapter = rememberScrollbarAdapter(scrollState)
         )
     }
-
 }
 
 @Composable
-fun OutputTextField(modifier: Modifier = Modifier) {
+fun OutputTextField(
+    text: String,
+    modifier: Modifier = Modifier) {
 
-    val scrollState: ScrollState = rememberScrollState()
+    val scrollState = rememberScrollState()
 
-    Box(modifier = modifier
-        .fillMaxSize()
-    ) {
-        OutlinedTextField(
-            value = "",
-            onValueChange = { /* do nothing yet */ },
-            placeholder = { Text("Paste certificate here") },
-            maxLines = Int.MAX_VALUE,
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            )
-        )
+                .verticalScroll(scrollState)
+                .padding(12.dp)
+        ) {
+            if (text.isBlank()) {
+                Text(
+                    "Decoded certificate details will appear here...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                text.lines().forEach { line ->
+                    if (line.isBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    } else if (line.contains(":")) {
+                        val (label, value) = line.split(":", limit = 2).map { it.trim() }
+                        Row {
+                            Text(
+                                text = "$label: ",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = value,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    } else {
+                        // For lines without :, e.g. separators or headers
+                        Text(
+                            text = line,
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+        }
 
         VerticalScrollbar(
             modifier = Modifier

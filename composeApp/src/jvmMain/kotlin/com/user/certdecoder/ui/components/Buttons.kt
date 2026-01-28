@@ -12,22 +12,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import com.user.certdecoder.ui.utils.decodeCertificate
 
 @Composable
-fun FunctionButtons() {
+fun FunctionButtons(
+    onDecode: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(modifier = Modifier
         .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ){
-        DecodeButton()
+        DecodeButton(onDecode = onDecode)
         ValidateButton()
     }
 }
 
 @Composable
-fun DecodeButton(modifier: Modifier = Modifier) {
-    Button(onClick = { /* Decode */ }) {
+fun DecodeButton(
+    onDecode: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Button(onClick = onDecode,
+        modifier = modifier
+    ){
         Text("Decode")
     }
 }
