@@ -3,7 +3,6 @@ package com.user.certdecoder.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -18,7 +17,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.user.certdecoder.ui.utils.CertificateValidationResult
 import com.user.certdecoder.ui.utils.decodeCertificate
+import com.user.certdecoder.ui.utils.validateCertificate
 
 
 @Composable
@@ -43,8 +44,10 @@ fun MainLayout() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             FileBrowser(modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f))
+                .fillMaxWidth(),
+                onPemLoaded = { content ->
+                    pemText = content
+                })
 
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -56,7 +59,7 @@ fun MainLayout() {
                 )
             }
 
-            FunctionButtons(
+           FunctionButtons(
                 onDecode = {
                     outputText = if (pemText.trim().isBlank()) {
                         "No input provided. Please paste a certificate."
@@ -67,8 +70,28 @@ fun MainLayout() {
                             "Error: ${e.message ?: e::class.simpleName}"
                         }
                     }
-                }
-            )
+                },
+
+                onClear = {
+                    if (!pemText.isBlank() || !outputText.isBlank()) {
+                        pemText = ""
+                        outputText = ""
+                    } else {}
+                },
+
+               onValidate = {
+                   outputText = when (val result = validateCertificate(pemText)) {
+                       is CertificateValidationResult.Valid ->
+                           "Certificate structure is valid ✓"
+
+                       is CertificateValidationResult.ValidWithWarning ->
+                           "⚠️ ${result.message}\n\nYou can still decode it, but consider removing the prefix text."
+
+                       is CertificateValidationResult.Invalid ->
+                           "Validation failed:\n${result.reason}"
+                   }
+               }
+           )
         }
 
         Column(

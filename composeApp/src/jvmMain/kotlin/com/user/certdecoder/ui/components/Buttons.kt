@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.user.certdecoder.ui.utils.decodeCertificate
+import com.user.certdecoder.ui.components.InputTextField
+import com.user.certdecoder.ui.components.OutputTextField
 
 @Composable
 fun FunctionButtons(
     onDecode: () -> Unit,
+    onValidate: () -> Unit,
+    onClear: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(modifier = Modifier
@@ -25,7 +29,8 @@ fun FunctionButtons(
         horizontalArrangement = Arrangement.SpaceEvenly
     ){
         DecodeButton(onDecode = onDecode)
-        ValidateButton()
+        ValidateButton(onValidate = onValidate)
+        ClearButton(onClear = onClear)
     }
 }
 
@@ -42,8 +47,23 @@ fun DecodeButton(
 }
 
 @Composable
-fun ValidateButton(modifier: Modifier = Modifier) {
-    Button(onClick = { /* Validate */ }) {
+fun ValidateButton(onValidate: () -> Unit,
+    modifier: Modifier = Modifier) {
+    Button(onClick = onValidate,
+        modifier = modifier
+    ){
         Text("Validate")
     }
+}
+
+@Composable
+fun ClearButton(
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier
+){
+        Button(onClick = onClear,
+            modifier = modifier
+        ){
+            Text("Clear All")
+        }
 }
