@@ -1,3 +1,9 @@
+Download Here:
+
+https://github.com/MikeDemen/CertificateDecoder/releases
+
+
+
 This is a Kotlin Multiplatform project targeting Desktop (JVM).
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
