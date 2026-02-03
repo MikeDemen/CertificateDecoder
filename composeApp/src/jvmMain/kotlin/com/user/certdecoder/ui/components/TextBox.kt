@@ -56,7 +56,7 @@ fun InputTextField(
             },
             interactionSource = interactionSource,
 
-            // Change color based on textfield's focus state
+            // Change color based on textField's focus state
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.Unspecified,
@@ -71,6 +71,8 @@ fun InputTextField(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(8.dp)
+
+
         )
         VerticalScrollbar(
             modifier = Modifier
