@@ -117,7 +117,7 @@ fun validateCertificate(pem: String): CertificateValidationResult {
         )
     }
 
-    // We'll collect parsing blocks starting from first valid BEGIN
+    // Collect parsing blocks starting from first valid BEGIN
     val blocksStartPositions = mutableListOf<Int>()
     var pos = firstBeginLineNum
     var blockNum = 1

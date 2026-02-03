@@ -27,14 +27,14 @@ fun FileBrowser(
 
     // FileKit launcher – this is the modern picker
     val launcher = rememberFilePickerLauncher(
-        type = FileKitType.File(listOf("pem", "cer", "crt"))  // or PickerType.Any if you want broader
+        type = FileKitType.File(listOf("pem", "cer", "crt"))
     ) { platformFile ->
         if (platformFile != null) {
             coroutineScope.launch {
                 isLoading = true
                 try {
                     val bytes = platformFile.readBytes()
-                    val content = String(bytes, Charsets.UTF_8).trim()   // ← safe & explicit
+                    val content = String(bytes, Charsets.UTF_8).trim()
 
                     onPemLoaded(content)
 
