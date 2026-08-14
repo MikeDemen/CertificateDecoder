@@ -67,3 +67,26 @@ fun ClearButton(
             Text("Clear All")
         }
 }
+
+@Composable
+fun ExportButtons(
+    enabled: Boolean,
+    isExportingTxt: Boolean,
+    isExportingXlsx: Boolean,
+    onExportTxt: () -> Unit,
+    onExportXlsx: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Button(onClick = onExportTxt, enabled = enabled && !isExportingTxt) {
+            Text("Export .txt")
+        }
+        Button(onClick = onExportXlsx, enabled = enabled && !isExportingXlsx) {
+            Text("Export .xlsx")
+        }
+    }
+}

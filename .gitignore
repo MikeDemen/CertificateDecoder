@@ -17,3 +17,9 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Compose Desktop packaging output (MSI/EXE/DMG/DEB/app-image)
+composeApp/output/
+
+# Local scratch/manual test output
+/test/

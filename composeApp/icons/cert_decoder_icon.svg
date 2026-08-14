@@ -1,0 +1,56 @@
+<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A5F"/>
+      <stop offset="100%" stop-color="#0F1F33"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8EDF2"/>
+    </linearGradient>
+    <linearGradient id="seal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3DDC97"/>
+      <stop offset="100%" stop-color="#1FA97A"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+
+  <!-- subtle inner border -->
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="none" stroke="#2E4E75" stroke-width="2"/>
+
+  <!-- Document / certificate card -->
+  <g filter="url(#soft-shadow)">
+    <rect x="62" y="46" width="108" height="140" rx="10" fill="url(#paper)"/>
+    <!-- folded corner -->
+    <path d="M 148 46 L 170 68 L 148 68 Z" fill="#C7D2DC"/>
+
+    <!-- decorative header lines (certificate title area) -->
+    <rect x="78" y="64" width="60" height="8" rx="4" fill="#1E3A5F"/>
+    <rect x="78" y="78" width="76" height="5" rx="2.5" fill="#9AA9B8"/>
+
+    <!-- ribbon/seal graphic on the certificate -->
+    <circle cx="96" cy="112" r="18" fill="none" stroke="#1E3A5F" stroke-width="4"/>
+    <path d="M 88 128 L 84 150 L 96 142 L 108 150 L 104 128" fill="#1E3A5F"/>
+    <path d="M 88 105 L 94 111 L 105 100" fill="none" stroke="#1E3A5F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- text lines representing decoded fields -->
+    <rect x="122" y="102" width="34" height="5" rx="2.5" fill="#9AA9B8"/>
+    <rect x="122" y="113" width="34" height="5" rx="2.5" fill="#9AA9B8"/>
+    <rect x="78" y="164" width="76" height="5" rx="2.5" fill="#C7D2DC"/>
+  </g>
+
+  <!-- Magnifying glass overlay (decoding / inspection) -->
+  <g filter="url(#soft-shadow)">
+    <circle cx="168" cy="152" r="34" fill="url(#seal)"/>
+    <circle cx="168" cy="152" r="24" fill="none" stroke="#0B2A22" stroke-width="4" opacity="0.15"/>
+    <circle cx="160" cy="144" r="15" fill="none" stroke="#FFFFFF" stroke-width="6"/>
+    <line x1="171" y1="155" x2="186" y2="170" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+    <!-- small binary/code glints inside lens to suggest decoding -->
+    <text x="153" y="148" font-family="monospace" font-size="9" fill="#FFFFFF" opacity="0.9">01</text>
+  </g>
+</svg>

@@ -1,6 +1,9 @@
 package com.user.certdecoder.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.border
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
@@ -20,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Card
@@ -30,20 +34,44 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.text.font.FontWeight
+import java.io.File
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputTextField(
     text: String,
     onTextChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFileSelected: (filePath: String, readBytes: suspend () -> ByteArray) -> Unit = { _, _ -> }
 ){
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val scrollState: ScrollState = rememberScrollState()
+    var isDragHovering by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    val dragAndDropTarget = rememberCertificateDropTarget(
+        onHoverChange = { isDragHovering = it },
+        onFileDropped = { file: File -> onFileSelected(file.absolutePath) { file.readBytes() } }
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .dragAndDropTarget(
+                shouldStartDragAndDrop = { true },
+                target = dragAndDropTarget
+            )
+            .then(
+                if (isDragHovering) {
+                    Modifier.border(BorderStroke(2.dp, MaterialTheme.colorScheme.primary))
+                } else {
+                    Modifier
+                }
+            )
+    ) {
         TextField(
             value = text,
             onValueChange = onTextChange,
@@ -51,7 +79,7 @@ fun InputTextField(
                 // Hide placeholder if window is selected or text is present
                 when {
                     isFocused || text.isNotEmpty() -> {}
-                    else                           -> Text("Paste your certificate contents here")
+                    else                           -> Text("Paste your certificate contents here, or drop a certificate file")
                 }
             },
             interactionSource = interactionSource,
@@ -91,42 +119,44 @@ fun OutputTextField(
     val scrollState = rememberScrollState()
 
     Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(12.dp)
-        ) {
-            if (text.isBlank()) {
-                Text(
-                    "Decoded certificate details will appear here...",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                text.lines().forEach { line ->
-                    if (line.isBlank()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    } else if (line.contains(":")) {
-                        val (label, value) = line.split(":", limit = 2).map { it.trim() }
-                        Row {
+        SelectionContainer {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(12.dp)
+            ) {
+                if (text.isBlank()) {
+                    Text(
+                        "Decoded certificate details will appear here...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    text.lines().forEach { line ->
+                        if (line.isBlank()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        } else if (line.contains(":")) {
+                            val (label, value) = line.split(":", limit = 2).map { it.trim() }
+                            Row {
+                                Text(
+                                    text = "$label: ",
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = value,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        } else {
+                            // For lines without :, e.g. separators or headers
                             Text(
-                                text = "$label: ",
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = value,
+                                text = line,
+                                fontWeight = FontWeight.SemiBold,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
-                    } else {
-                        // For lines without :, e.g. separators or headers
-                        Text(
-                            text = line,
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
                 }
             }

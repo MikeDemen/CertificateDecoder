@@ -32,19 +32,40 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.poi.ooxml)
+        }
+        jvmTest.dependencies {
+            implementation(libs.mockito.core)
         }
     }
 }
 
+
+val appPackageName = "CertDecoder"
+val appVersion = "1.0.1"
 
 compose.desktop {
     application {
         mainClass = "com.user.certdecoder.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.user.certdecoder"
-            packageVersion = "1.0.0"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
+            packageName = appPackageName
+            packageVersion = appVersion
+            outputBaseDir.set(project.layout.projectDirectory.dir("output"))
+
+            windows {
+                // Fixed for the lifetime of this app — do not regenerate. Windows Installer uses
+                // this UpgradeCode to recognize a new build as an upgrade of a previous install
+                // (rather than an unrelated product) and uninstalls the old version automatically.
+                // Bump packageVersion above on every release for this to actually trigger.
+                upgradeUuid = "0034ebe0-6708-4cce-a3b5-d18949651329"
+                iconFile.set(project.file("icons/cert_decoder.ico"))
+                installationPath = "Cert Decoder"
+            }
+            linux {
+                iconFile.set(project.file("icons/cert_decoder_icon.png"))
+            }
         }
     }
 }
